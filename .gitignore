@@ -1,0 +1,6 @@
+testwritewingman.py
+*.pyc
+*.log
+*.json
+build/
+__pycache__/
