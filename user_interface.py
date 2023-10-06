@@ -10,13 +10,21 @@ import api_interaction
 import pyperclip
 import pyttsx3
 
+import pyglet
+pyglet.options['win32_gdi_font'] = True
+pyglet.font.add_file('elitedanger.ttf')
+
+
+
 import threading
 
 tk.set_appearance_mode("dark")  # Modes: system (default), light, dark
-tk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+tk.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+
+
+wingman1_FSDTarget = ""
 
 #from multiprocessing import Process, freeze_support 
-voice_enabled = False
 
 #from customtkinter import ttk
 
@@ -29,6 +37,7 @@ last_wingman1_fsdtarget_value = None
 
 ## synthse vocale
 engine = pyttsx3.init()
+voice_enabled = False
 text_to_speak = "New suggested FSD Target acquired : "
 ##
 
@@ -114,11 +123,11 @@ def update_labels():
     main_window.after(1000, update_labels)
 
 main_window = tk.CTk()
-main_window.geometry("660x400")
+main_window.geometry("640x430")
 main_window.title("Wingman's FSDtarget detector")
 
-police = ('Verdana',20)
-config_button = tk.CTkButton(main_window, text="⚙️", command=open_config_window)
+police = ('',20)
+config_button = tk.CTkButton(main_window, text="⚙️", command=open_config_window, width=30, height=30)
 config_button.pack(side=tk.TOP)
 
 labels = []
@@ -177,9 +186,6 @@ def toggle_update():
         copy_button.configure(state=tk.DISABLED)
 
 
-voice_toggle_state = tk.BooleanVar(value=voice_enabled)
-voice_toggle_button = tk.CTkCheckBox(main_window, text="Enable voice info", variable=voice_toggle_state)
-voice_toggle_button.pack()
 
 
 toggle_state = tk.BooleanVar(value=False)
@@ -191,9 +197,17 @@ copy_toggle_button = tk.CTkCheckBox(main_window, text="Autocopy fsdtarget to Cli
 copy_toggle_button.configure(state=tk.DISABLED)
 copy_toggle_button.pack()
 
-copy_button = tk.CTkButton(main_window, text="Copy Wingman1 FSDTarget", command=lambda: copy_wingman1_FSDTarget(wingman1_FSDTarget, False), font=("", 15))
+voice_toggle_state = tk.BooleanVar(value=voice_enabled)
+voice_toggle_button = tk.CTkCheckBox(main_window, text="Enable voice info", variable=voice_toggle_state)
+voice_toggle_button.pack()
+
+labelspace = tk.CTkLabel(main_window, text=" ")
+labelspace.pack()
+
+copy_button = tk.CTkButton(main_window, text="Copy FSDTarget", command=lambda: copy_wingman1_FSDTarget(wingman1_FSDTarget, False), font=("Elite Danger", 55))
 copy_button.configure(state=tk.DISABLED)
 copy_button.pack()
+
 
 
 
@@ -218,11 +232,31 @@ directory_to_watch = "."
 observer.schedule(JSONFileHandler(), directory_to_watch)
 observer.start()
 
+def purgesys_and_exit():
+    # Charger le fichier JSON actuel
+    with open("config_and_data.json", "r") as json_file:
+        config_data = json.load(json_file)
+
+    # Supprimer les valeurs de wingman1
+    config_data["wingman1"]["FSDTarget"] = ""
+    config_data["wingman1"]["current_StarSystem"] = ""
+    config_data["my_commander"]["FSDTarget"] = ""
+    config_data["my_commander"]["current_StarSystem"] = ""
+
+    # Enregistrez les nouvelles données dans le fichier JSON
+    with open("config_and_data.json", "w") as json_file:
+        json.dump(config_data, json_file, indent=4)
+
+    # Fermez la fenêtre principale
+    observer.stop()
+    observer.join()
+    main_window.destroy()
+
+main_window.protocol("WM_DELETE_WINDOW", purgesys_and_exit)
 main_window.mainloop()
 
 
 
-# stop l'observateur
-observer.stop()
-observer.join()
+
+
 

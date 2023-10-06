@@ -5,6 +5,7 @@ import json
 #miscconf
 windows_username = os.getlogin()
 repertoire_logs = os.path.join("C:\\", "Users", windows_username, "Saved Games", "Frontier Developments", "Elite Dangerous")
+font_path = os.path.abspath("C:\\Edsharefsdtarget\\Edsharefsdtarget\\elitedanger.ttf")  # Remplacez le chemin par le chemin complet vers votre fichier de police
 
 
 json_file_path = "config_and_data.json"
