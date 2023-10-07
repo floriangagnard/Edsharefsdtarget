@@ -2,7 +2,6 @@ import json
 import os
 import glob
 import time
-import configAndData
 import json
 
 #TEMP 
@@ -10,7 +9,8 @@ import api_interaction
 ######
 
 
-
+windows_username = os.getlogin()
+repertoire_logs = os.path.join("C:\\", "Users", windows_username, "Saved Games", "Frontier Developments", "Elite Dangerous")
 
 
 FSDTarget = ""
@@ -78,11 +78,9 @@ def get_lastLogToParse(repertoire_logs):
 def run_log_monitor():
 
     while True:
-        last_log = get_lastLogToParse(configAndData.repertoire_logs)
+        last_log = get_lastLogToParse(repertoire_logs)
         if last_log:
             checkLogUpdate(last_log)
 
         time.sleep(300)  #5 minutes => check for a new log
 
-if __name__ == "__main__":
-    run_log_monitor()
