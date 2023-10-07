@@ -18,8 +18,21 @@ pyglet.font.add_file('elitedanger.ttf')
 
 import threading
 
+from crew import Crew
+from commander import Commander
+import dataStorageService
+
+#from multiprocessing import Process, freeze_support  # Importez freeze_support
+voice_enabled = False
 tk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 tk.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+
+
+
+## Initilisation du Commander
+mainCommander = dataStorageService.read_main_commander()
+listWingMan = [Commander("a","a","a","a"),Commander("b","b","b","b")]
+crew = Crew(mainCommander,listWingMan)
 
 
 wingman1_FSDTarget = ""
@@ -110,11 +123,13 @@ def update_labels():
         ("Your CMR name: ", config_data["my_commander"]["name"]),
         ("Your current system: ", config_data["my_commander"]["current_StarSystem"]),
         ("Last target name: ", config_data["my_commander"]["FSDTarget"]),
+        ("Vincent: ", crew.serialize()),
         ("--------------------"),
         ("Wingman1 name: ", config_data["wingman1"]["name"]),
         ("Wingman's current system: ", config_data["wingman1"]["current_StarSystem"]),
         ("Wingman's FSDTarget: ", config_data["wingman1"]["FSDTarget"]),
         ("--------------------"),
+        
     ]
 
     for label, value in zip(labels, labels_data):
@@ -131,7 +146,7 @@ config_button = tk.CTkButton(main_window, text="⚙️", command=open_config_win
 config_button.pack(side=tk.TOP)
 
 labels = []
-for _ in range(8):
+for _ in range(15):
     label = tk.CTkLabel(main_window, font=police)
     label.pack()
     labels.append(label)

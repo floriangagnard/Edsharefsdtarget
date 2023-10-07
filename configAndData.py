@@ -2,6 +2,7 @@ import os
 import json
 
 
+
 #miscconf
 windows_username = os.getlogin()
 repertoire_logs = os.path.join("C:\\", "Users", windows_username, "Saved Games", "Frontier Developments", "Elite Dangerous")
@@ -9,6 +10,9 @@ font_path = os.path.abspath("C:\\Edsharefsdtarget\\Edsharefsdtarget\\elitedanger
 
 
 json_file_path = "config_and_data.json"
+
+
+# INITIALISATION DES FICHIERS NECESSAIRE 
 
 #  si  fichier JSON existe déjà
 if os.path.exists(json_file_path):
