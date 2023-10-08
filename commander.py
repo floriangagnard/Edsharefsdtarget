@@ -1,12 +1,16 @@
 import json
+import requests
+import io
+from rich import print
 
 # Commander Class et methodes utilitaires 
 class Commander:
-    def __init__(self, name : str, key : str, position : str, target : str) -> None :
+    def __init__(self, name : str, key : str, connector="") -> None :
         self.name = name
         self.key = key
-        self.position = position
-        self.target = target
+        self.connector = connector
+        self.position = ""
+        self.target = ""
 
 
     def update_target(self,target) -> None:
@@ -27,7 +31,15 @@ class Commander:
         """
         Methode permettant de serialiser l'instance du commander en json
         """
-        return  self.name + " at " + self.position
+    
+        return f"""------------ COMMANDER ------------
+name      : {self.name}
+connector : {self.connector}
+Position  : {self.position}
+Target    : {self.target}
+-----------------------------------
+        """
+ 
 
     @staticmethod
     def deserialize(json_string : str ) :
@@ -35,6 +47,5 @@ class Commander:
         Methode statique permettant de creer une instance de commander à partir d'une string JSON
         """
         myjson = json.loads(json_string)
-        return Commander(myjson['name'],myjson['key'],myjson['position'],myjson['target'])
-
+        return Commander(myjson['name'],myjson['key'])
 

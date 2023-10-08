@@ -3,6 +3,8 @@ import os
 from typing import List
 from commander import Commander
 from commanders import Commanders
+from context import Context
+from log import LogEntry
 
 mainCommanderFile = "mainCommanderData.json"
 wingManCommandersFile = "wingmenData.json"
@@ -42,4 +44,23 @@ def write_wingmens_commanders(commanders:  List[Commander]):
     f = open(wingManCommandersFile, "w")
     f.write(data)
     f.close()
+
+##########################
+
+def read_last_linelogfile(context: Context,event,path):
+    
+    if "Journal." not in path:
+        return ""
+    print(f"{event} : {path}")
+    if os.path.exists(path):
+        with open(path, "r") as file:
+            lastline =  file.readlines()[-1]
+            logEntry = LogEntry.deserialize(lastline)
+            if logEntry.event=="FSDTarget" :
+                context.add_to_logs(f"event: {logEntry.event} : {logEntry.name}")
+                context.crew.commander.target = logEntry.name
+                context.action_publish_target()
+    else:
+        return ""
+    
 

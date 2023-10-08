@@ -7,7 +7,7 @@ class Commanders:
 
     @staticmethod
     def build(myjson) -> Commander: 
-        return Commander(myjson['name'],myjson['key'],myjson['position'],myjson['target'])
+        return Commander(myjson['name'],myjson['key'],)
 
     @staticmethod
     def serialize(commanders : List[Commander]):
@@ -24,6 +24,11 @@ class Commanders:
         myListjson = json.loads(json_string, object_hook=Commanders.build)
         return myListjson
        
-
-
-
+    @staticmethod
+    def findByName(wingmen,name) -> Commander:
+        wingman = None
+        for innerwingman in wingmen :
+            if innerwingman.name == name:
+                wingman = innerwingman
+        print(wingman)
+        return wingman
