@@ -44,27 +44,31 @@ class Context:
     def action_publish_targetV2(self):
         # to EDSM 
         commander = self.crew.commander
+        self.add_to_logs(f"**Info** BroadCast: {commander.target}")
         try:
 
             for innerWingmen in self.crew.wingmen:
-                url = f'{innerWingmen.connector}/wingmen/{commander.name}/target/{commander.target}'
-                # do something with v
-            
-                response = requests.post(url)
+                if innerWingmen.connector !=  "": 
+                    url = f'{innerWingmen.connector}/wingmen/{commander.name}/target/{commander.target}'
+                    # do something with v
+                
+                    response = requests.post(url)
 
-                # response JSON
-                if response.status_code == 200:
-                    self.add_to_logs(f"Update.")
+                    # response JSON
+                    if response.status_code == 200:
+                        self.add_to_logs(f"Update.")
+                    else:
+                        self.add_to_logs(f"**W** Erreur lors de la requête à l'API EDSM. Code de statut : {response.status_code}")
                 else:
-                    self.add_to_logs(f"Erreur lors de la requête à l'API EDSM. Code de statut : {response.status_code}")
+                    self.add_to_logs(f"**Warn** No BroadCast adress for: {innerWingmen.name}")
 
         except Exception as e:
             self.add_to_logs(f"Une erreur s'est produite : {str(e)}")
         
     def add_to_logs(self,log: str):
-        if len(self.logDataApp) <10 :
-            self.logDataApp.append(log)
-        else:
-            newlog = self.logDataApp[1:9]
-            newlog.append(log)
-            self.logDataApp=newlog
+        if len(self.logDataApp) > 19 :
+            
+            del self.logDataApp[0]
+                
+            
+        self.logDataApp.append(log)

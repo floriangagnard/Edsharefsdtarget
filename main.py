@@ -10,7 +10,7 @@ from watchdog.observers import Observer
 from logwatch import LogEDFile, path
 from serveurPlug import create_application
 import dataStorageService
-
+import pyttsx3
 
 
 ## Initilisation du Commander
@@ -33,7 +33,15 @@ apith.daemon = True  # Le thread se terminera lorsque l'application principale s
 apith.start()
 
 
+engine = pyttsx3.init()
+voice_enabled = False
+text_to_speak = "Bienvenue Commandeur"
+engine.say(text_to_speak)
+engine.runAndWait()
+
 while True:
     app.render()
     # Remove the Time taken by code to execute
-    time.sleep(1.0 - ((time.time() - starttime) % 1.0))
+    time.sleep(0.5 - ((time.time() - starttime) % 0.5))
+
+    

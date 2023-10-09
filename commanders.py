@@ -7,7 +7,7 @@ class Commanders:
 
     @staticmethod
     def build(myjson) -> Commander: 
-        return Commander(myjson['name'],myjson['key'],)
+        return Commander(myjson['name'],myjson['key'],myjson['connector'])
 
     @staticmethod
     def serialize(commanders : List[Commander]):

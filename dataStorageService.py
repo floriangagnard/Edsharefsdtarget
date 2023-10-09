@@ -5,6 +5,7 @@ from commander import Commander
 from commanders import Commanders
 from context import Context
 from log import LogEntry
+import pyperclip
 
 mainCommanderFile = "mainCommanderData.json"
 wingManCommandersFile = "wingmenData.json"
@@ -48,18 +49,41 @@ def write_wingmens_commanders(commanders:  List[Commander]):
 ##########################
 
 def read_last_linelogfile(context: Context,event,path):
-    
     if "Journal." not in path:
         return ""
-    print(f"{event} : {path}")
+    #context.add_to_logs(f"read_last_linelogfile {event} : {path}")
     if os.path.exists(path):
         with open(path, "r") as file:
-            lastline =  file.readlines()[-1]
-            logEntry = LogEntry.deserialize(lastline)
-            if logEntry.event=="FSDTarget" :
-                context.add_to_logs(f"event: {logEntry.event} : {logEntry.name}")
-                context.crew.commander.target = logEntry.name
-                context.action_publish_target()
+            arrayLogs = []
+            lines =  file.readlines()
+            lastline = lines[-1]
+            lastlogEntry = LogEntry.deserialize(lastline)
+            arrayLogs = [lastlogEntry]
+            for x in range(2,5):
+                currentlineread = lines[-x] 
+                currentlog = LogEntry.deserialize(currentlineread)
+                if lastlogEntry.timestamp == currentlog.timestamp :
+                    arrayLogs.append(currentlog)
+
+            context.add_to_logs(f"Traitement de {len(arrayLogs)} at {lastlogEntry.timestamp}")
+            for logEntry in arrayLogs:
+                context.add_to_logs(f" DEBUG **{logEntry.event}**")
+
+            for logEntry in arrayLogs:
+                context.add_to_logs(f" Run on **{logEntry.event}**")
+                if logEntry.event=="FSDTarget" :
+                    context.add_to_logs(f"Declenchement : {logEntry.event} : __{logEntry.timestamp}__")
+                    # TODO detection de changement
+                    context.crew.commander.target = logEntry.name
+                    pyperclip.copy(context.crew.commander.target)
+                    context.action_publish_target()
+                    context.action_publish_targetV2()
+                if logEntry.event == "SupercruiseExit":
+                    context.add_to_logs(f"Declenchement: {logEntry.event} : __{logEntry.timestamp}__")
+                    context.crew.commander.position = logEntry.star_system
+                if logEntry.event == "SupercruiseEntry":
+                    context.add_to_logs(f"Declenchement: {logEntry.event} : __{logEntry.timestamp}__")
+                    context.crew.commander.position = logEntry.star_system                
     else:
         return ""
     

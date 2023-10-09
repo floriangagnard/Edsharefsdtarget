@@ -79,4 +79,4 @@ def create_application(app_name, context: Context):
                              "GET,PUT,POST,DELETE,OPTIONS")
         return response
 
-    app.run()
+    app.run(port=7000)
