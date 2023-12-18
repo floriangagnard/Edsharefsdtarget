@@ -1,6 +1,4 @@
 import requests
-import schedule
-import pyperclip
 import time
 import json
 from configAndData import get_wingmankeydependingName
@@ -31,7 +29,7 @@ def send_comment_to_api(commander_name, api_key, system_name, comment):
     except Exception as e:
         print(f"Une erreur s'est produite : {str(e)}")
 
-# get le systeme actuel d'un wingman ppar EDSM
+# get le systeme actuel d'un wingman par EDSM
 def get_wingman_current_StarSystem(wingman_commander_name, wingman_api_key):
     #try:
         params = {

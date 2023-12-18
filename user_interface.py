@@ -18,8 +18,22 @@ pyglet.font.add_file('elitedanger.ttf')
 
 import threading
 
+from crew import Crew
+from commander import Commander
+import dataStorageService
+
+#from multiprocessing import Process, freeze_support  # Importez freeze_support
+voice_enabled = False
 tk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 tk.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+
+
+
+## Initilisation du Commander
+mainCommander = dataStorageService.read_main_commander()
+listWingMan = dataStorageService.read_wingmens_commanders()
+dataStorageService.write_wingmens_commanders(listWingMan)
+crew = Crew(mainCommander,listWingMan)
 
 
 wingman1_FSDTarget = ""
@@ -103,19 +117,17 @@ def open_config_window():
 ################## fin  new window ###################
 
 def update_labels():
-    with open("config_and_data.json", "r") as json_file:
-        config_data = json.load(json_file)
 
     labels_data = [
-        ("Your CMR name: ", config_data["my_commander"]["name"]),
-        ("Your current system: ", config_data["my_commander"]["current_StarSystem"]),
-        ("Last target name: ", config_data["my_commander"]["FSDTarget"]),
-        ("--------------------"),
-        ("Wingman1 name: ", config_data["wingman1"]["name"]),
-        ("Wingman's current system: ", config_data["wingman1"]["current_StarSystem"]),
-        ("Wingman's FSDTarget: ", config_data["wingman1"]["FSDTarget"]),
-        ("--------------------"),
+        ("Your CMR name: ", crew.commander.name),
+        ("Your current system: ", crew.commander.position),
+        ("Last target name: ", crew.commander.target),
+        ("Wingman1 name: ", crew.wingmen[0].name),
+        ("Wingman's current system: ", crew.wingmen[0].position),
+        ("Wingman's FSDTarget: ", crew.wingmen[0].target),
+        
     ]
+
 
     for label, value in zip(labels, labels_data):
         label.configure(text=f"{value[0]}{value[1]}")
@@ -126,19 +138,17 @@ main_window = tk.CTk()
 main_window.geometry("640x430")
 main_window.title("Wingman's FSDtarget detector")
 
+
+
 police = ('',20)
-config_button = tk.CTkButton(main_window, text="⚙️", command=open_config_window, width=30, height=30)
-config_button.pack(side=tk.TOP)
+#config_button = tk.CTkButton(main_window, text="⚙️", command=open_config_window, width=30, height=30)
+#config_button.pack(side=tk.TOP)
 
 labels = []
-for _ in range(8):
+for _ in range(15):
     label = tk.CTkLabel(main_window, font=police)
     label.pack()
     labels.append(label)
-
-
-
-
 
 
 
